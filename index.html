@@ -1,176 +1,161 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-  <!DOCTYPE html>
-  <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shadow Voyager</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <title>G 1</title>
     <style>
       body {
+        touch-action: none;
         margin: 0;
-        overflow: hidden;
-        font-family: 'Arial', sans-serif;
-        background-color: #1e1e2f;
+        padding: 0;
+        text-align: center;
+        background-color: black;
       }
-  
-      #splash-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: linear-gradient(120deg, #1e1e2f, #232356);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        z-index: 10;
-        flex-direction: column;
-        animation: fadeOut 3s ease-out 5s forwards;
-      }
-  
-      .splash-text {
-        font-size: 3rem;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 5px;
-        animation: zoomIn 1.5s ease-in-out;
-        margin: 10px 0;
-      }
-      .video-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Ensures the video covers the entire background */
-            z-index: -1; /* Places the video behind other content */
-        }
 
-  
-      .sub-text {
-        font-size: 1.5rem;
-        animation: fadeIn 2s ease-in-out 2s forwards;
-        opacity: 0;
-      }
-  
-      #enter-game {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: #ff5c5c;
+      #canvas {
+        display: block;
+        margin: 0;
         color: white;
-        padding: 15px 30px;
-        font-size: 1.2rem;
-        border: none;
-        border-radius: 5px;
-        display: none;
-        cursor: pointer;
-        z-index: 1;
       }
-  
-      @keyframes zoomIn {
-        0% {
-          transform: scale(0.5);
-          opacity: 0;
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
+
+      #canvas:focus {
+        outline: none;
       }
-  
-      @keyframes fadeIn {
-        0% {
-          opacity: 0;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
-  
-      @keyframes fadeOut {
-        to {
-          opacity: 0;
-          visibility: hidden;
-        }
-      }
-  
-      #main-menu {
-        display: none;
-        background: #121212;
-        color: white;
-        width: 100vw;
-        height: 100vh;
+
+      #status {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
+        visibility: hidden;
+      }
+
+      #status-progress {
+        width: 366px;
+        height: 7px;
+        background-color: #38363a;
+        border: 1px solid #444246;
+        box-shadow: 0 0 2px 1px #1b1c22;
+        border-radius: 2px;
+        visibility: visible;
+      }
+
+      #status-progress-inner {
+        height: 100%;
+        width: 0;
+        background-color: #202020;
+        box-shadow: 0 0 1px 1px #27282e;
+        border-radius: 3px;
+        transition: width 0.5s linear;
+      }
+
+      #status-notice {
+        margin: 0 100px;
+        line-height: 1.3;
+        visibility: visible;
+        padding: 4px 6px;
       }
     </style>
+    <link id="-gd-engine-icon" rel="icon" type="image/png" href="webg1.icon.png" />
+    <link rel="apple-touch-icon" href="webg1.apple-touch-icon.png" />
   </head>
   <body>
-    <video class="video-background" autoplay muted loop>
-      <source src="6128196-uhd_2880_2160_24fps.mp4" type="video/mp4">
-  </video>
-    <!-- Splash Screen -->
-    <div id="splash-screen">
-      <div class="splash-text">Shadow Voyager</div>
-      <div class="sub-text">Get Ready to Play!</div>
+    <canvas id="canvas">
+      HTML5 canvas appears to be unsupported in the current browser.<br />
+      Please try updating or use a different browser.
+    </canvas>
+
+    <div id="status">
+      <div id="status-progress" style="display: none;">
+        <div id="status-progress-inner"></div>
+      </div>
+      <div id="status-notice" class="godot" style="display: none;"></div>
     </div>
-  
-    
-    <!-- Main Menu -->
-    <div id="main-menu">
-      <h1>Welcome to Shadow Voyager</h1>
-      <br>
-      <br>
-          <!-- Enter Game Button -->
-    <button id="enter-game">Enter Game</button>
-      <p>Press Start to Play!</p>
-    </div>
-  
+
+    <script src="webg1.js"></script>
     <script>
-      // Show "Enter Game" button after splash screen animation
-      setTimeout(() => {
-        document.getElementById('enter-game').style.display = 'block';
-      }, 5000); // Same duration as splash fade-out
-    
-      // Handle "Enter Game" button click
-      document.getElementById('enter-game').addEventListener('click', () => {
-        // Hide splash screen and main menu
-        document.getElementById('splash-screen').style.display = 'none';
-        document.getElementById('enter-game').style.display = 'none';
-        document.getElementById('main-menu').style.display = 'none';
-    
-        // Load Godot game
-        const iframe = document.createElement('iframe');
-        iframe.src = 'game/index.html'; // Path to Godot's exported game
-        iframe.style.width = '100vw';
-        iframe.style.height = '100vh';
-        iframe.style.border = 'none';
-        document.body.appendChild(iframe);
-      });
+      const GODOT_CONFIG = {
+        args: [],
+        canvasResizePolicy: 2,
+        executable: "webg1",
+        fileSizes: { "webg1.pck": 2648784, "webg1.wasm": 49282035 },
+        focusCanvas: true,
+      };
+
+      const engine = new Engine(GODOT_CONFIG);
+
+      (function () {
+        const statusProgress = document.getElementById("status-progress");
+        const statusProgressInner = document.getElementById("status-progress-inner");
+        const statusNotice = document.getElementById("status-notice");
+
+        let initializing = true;
+
+        function setStatusMode(mode) {
+          [statusProgress, statusNotice].forEach((elem) => {
+            elem.style.display = "none";
+          });
+
+          if (mode === "progress") {
+            statusProgress.style.display = "block";
+          } else if (mode === "notice") {
+            statusNotice.style.display = "block";
+          }
+        }
+
+        function setStatusNotice(text) {
+          while (statusNotice.lastChild) {
+            statusNotice.removeChild(statusNotice.lastChild);
+          }
+          const lines = text.split("\n");
+          lines.forEach((line) => {
+            statusNotice.appendChild(document.createTextNode(line));
+            statusNotice.appendChild(document.createElement("br"));
+          });
+        }
+
+        function displayFailureNotice(err) {
+          const msg = err.message || err;
+          console.error(msg);
+          setStatusNotice(msg);
+          setStatusMode("notice");
+          initializing = false;
+        }
+
+        const missing = Engine.getMissingFeatures();
+        if (missing.length !== 0) {
+          displayFailureNotice(
+            "Error\nThe following features required to run Godot projects on the Web are missing:\n" +
+              missing.join("\n")
+          );
+        } else {
+          setStatusMode("progress");
+
+          engine
+            .startGame({
+              onProgress: function (current, total) {
+                if (total > 0) {
+                  statusProgressInner.style.width = `${(current / total) * 100}%`;
+                  if (current === total) {
+                    setTimeout(() => {
+                      setStatusMode("hidden");
+                    }, 500);
+                  }
+                }
+              },
+            })
+            .then(() => {
+              setStatusMode("hidden");
+              initializing = false;
+            })
+            .catch(displayFailureNotice);
+        }
+      })();
     </script>
-    
   </body>
-  </html>
-    <!-- Enter Game Button -->
-    <button id="enter-game">Enter Game</button>
-
-  <script>
-    // Show "Enter Game" button after splash screen animation
-    setTimeout(() => {
-      document.getElementById('enter-game').style.display = 'block';
-    }, 5000); // Same duration as splash fade-out
-
-    // Handle "Enter Game" button click
-    document.getElementById('enter-game').addEventListener('click', () => {
-      document.getElementById('splash-screen').style.display = 'none';
-      document.getElementById('enter-game').style.display = 'none';
-      document.getElementById('main-menu').style.display = 'flex';
-    });
-  </script>
-</body>
 </html>
